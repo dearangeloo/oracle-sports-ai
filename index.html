@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OracleSports.ai — AI-Powered Sports Intelligence</title>
+  <meta name="description" content="AI-powered sports predictions, rollover challenges, match analysis and bankroll tools. Predict Smarter. Bet Smarter.">
+  <link rel="icon" type="image/jpeg" href="assets/images/logo.jpg">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Paystack (loaded synchronously so window.PaystackPop is ready before any click) -->
+  <script src="https://js.paystack.co/v1/inline.js"></script>
+
+  <!-- OneSignal (deferred init pattern) -->
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+  <script>window.OneSignalDeferred = window.OneSignalDeferred || [];</script>
+</head>
+<body>
+
+  <!-- Background particles -->
+  <canvas id="particles-canvas"></canvas>
+
+  <!-- Toasts -->
+  <div id="toast-container"></div>
+
+  <!-- ============ NAVBAR ============ -->
+  <nav class="navbar">
+    <a href="#hero" class="nav-logo">
+      <img src="assets/images/logo.jpg" alt="OracleSports.ai logo">
+      <span class="nav-logo-text">ORACLE<span>SPORTS.AI</span></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#hero" class="active">Home</a></li>
+      <li><a href="#predictions">Predictions</a></li>
+      <li><a href="#match-center">AI Match Center</a></li>
+      <li><a href="#challenges">Challenges</a></li>
+      <li><a href="#performance">Statistics</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="btn-nav-login" onclick="openModal('auth-modal')">Login</button>
+      <button class="btn-nav-register" onclick="openModal('auth-modal')">Register</button>
+    </div>
+    <button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </nav>
+
+  <!-- ============ HERO ============ -->
+  <section id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid-overlay"></div>
+    <div class="hero-inner">
+      <div class="hero-content">
+        <div class="hero-badge"><span class="dot"></span> AI LIVE — Analyzing Today's Matches</div>
+        <h1 class="hero-title">
+          <span class="line-electric">ORACLE</span><span class="line-gold">SPORTS</span><span>.AI</span>
+        </h1>
+        <p class="hero-tagline">AI-Powered Sports Analysis &amp; Prediction Engine</p>
+        <p class="hero-desc">
+          Analyze matches, discover value bets, join rollover challenges, and make smarter
+          sports decisions using advanced AI intelligence.
+        </p>
+        <div class="hero-actions">
+          <button class="btn btn-primary btn-lg" onclick="openModal('auth-modal')">🚀 Start Free</button>
+          <a href="#challenges" class="btn btn-gold btn-lg">🏆 Join 1.5 Challenge</a>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <span class="val" id="stat-winrate">0%</span>
+            <span class="lbl">Avg Win Rate</span>
+          </div>
+          <div class="hero-stat">
+            <span class="val" id="stat-predictions">0</span>
+            <span class="lbl">Predictions Made</span>
+          </div>
+          <div class="hero-stat">
+            <span class="val" id="stat-members">0</span>
+            <span class="lbl">Active Users</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-robot">
+        <div class="robot-wrapper">
+          <div class="robot-ring"></div>
+          <img src="assets/images/robot-hero.jpg" alt="OracleSports AI Robot Analyst">
+          <div class="data-float data-float-1">⚡ Risk Level: <strong>LOW</strong></div>
+          <div class="data-float data-float-2">📊 Confidence: <strong>91%</strong></div>
+          <div class="data-float data-float-3">🎯 Value Score: <strong>A+</strong></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ LIVE TICKER ============ -->
+  <div class="live-ticker">
+    <div class="ticker-inner" id="ticker-inner">
+      <div class="ticker-item">🏆 World Cup: <span class="odds-badge">Live Now</span> Daily AI picks updating</div>
+      <div class="ticker-item ticker-divider">◆</div>
+      <div class="ticker-item">⚽ Liverpool vs Newcastle <span class="odds-badge">84% Confidence</span></div>
+      <div class="ticker-item ticker-divider">◆</div>
+      <div class="ticker-item">🔥 PSG vs Lyon — Value Pick: Over 2.5 <span class="odds-badge">A+</span></div>
+      <div class="ticker-item ticker-divider">◆</div>
+      <div class="ticker-item">✅ Chelsea Win confirmed — Confidence 88% <span class="odds-badge">Won</span></div>
+      <div class="ticker-item ticker-divider">◆</div>
+      <div class="ticker-item">📈 Oracle Safe Growth — 7 Day Streak Active</div>
+      <div class="ticker-item ticker-divider">◆</div>
+      <!-- duplicate for seamless loop -->
+      <div class="ticker-item">🏆 World Cup: <span class="odds-badge">Live Now</span> Daily AI picks updating</div>
+      <div class="ticker-item ticker-divider">◆</div>
+      <div class="ticker-item">⚽ Liverpool vs Newcastle <span class="odds-badge">84% Confidence</span></div>
+      <div class="ticker-item ticker-divider">◆</div>
+      <div class="ticker-item">🔥 PSG vs Lyon — Value Pick: Over 2.5 <span class="odds-badge">A+</span></div>
+      <div class="ticker-item ticker-divider">◆</div>
+      <div class="ticker-item">✅ Chelsea Win confirmed — Confidence 88% <span class="odds-badge">Won</span></div>
+      <div class="ticker-item ticker-divider">◆</div>
+      <div class="ticker-item">📈 Oracle Safe Growth — 7 Day Streak Active</div>
+      <div class="ticker-item ticker-divider">◆</div>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Daily Mission Banner (shown when logged in) -->
+    <div id="mission-banner" class="mission-banner reveal" style="display:none; margin-top:40px;"></div>
+  </div>
+
+  <!-- ============ DAILY PREDICTIONS ============ -->
+  <section id="predictions">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-eyebrow">AI-Generated</span>
+        <h2 class="section-title">Daily <span>Predictions</span></h2>
+        <p class="section-subtitle">Free daily picks powered by our AI engine, prioritizing today's and tomorrow's biggest matches — including the World Cup.</p>
+      </div>
+      <div class="predictions-grid" id="predictions-grid"></div>
+    </div>
+  </section>
+
+  <!-- ============ ORACLE AI ASSISTANT (floating) ============ -->
+  <div id="oracle-assistant">
+    <div class="oracle-panel" id="oracle-panel">
+      <div class="oracle-panel-header">
+        <img src="assets/images/logo.jpg" alt="Oracle AI">
+        <div>
+          <div class="oracle-panel-title">Oracle AI Assistant</div>
+          <div class="oracle-panel-sub">● Online — Analyzing matches</div>
+        </div>
+      </div>
+      <div class="oracle-pick-row">
+        <span class="label">Today's Value Pick</span>
+      </div>
+      <div class="oracle-pick-row">
+        <span class="label">Match</span>
+        <span class="value" id="oracle-match">Loading...</span>
+      </div>
+      <div class="oracle-pick-row">
+        <span class="label">Prediction</span>
+        <span class="value" id="oracle-pick">—</span>
+      </div>
+      <div class="oracle-confidence">
+        <span class="pct" id="oracle-conf">—</span>
+        <span class="pct-label">Confidence Score</span>
+      </div>
+    </div>
+    <div class="oracle-btn" id="oracle-btn" onclick="toggleOracle()">
+      <img src="assets/images/logo.jpg" alt="Oracle AI Assistant">
+      <span class="oracle-pulse"></span>
+    </div>
+  </div>
+
+  <!-- ============ AI MATCH CENTER ============ -->
+  <section id="match-center">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-eyebrow">Explore</span>
+        <h2 class="section-title">AI Match <span>Center</span></h2>
+        <p class="section-subtitle">Search matches, filter by league, and explore probability, BTTS, form, and head-to-head analysis. Currently spotlighting the World Cup.</p>
+      </div>
+      <div class="match-filters reveal">
+        <input type="text" class="match-search-input" id="match-search" placeholder="Search team or match...">
+        <button class="match-filter-select league-filter-btn active" data-id="1" style="cursor:pointer">🏆 World Cup</button>
+        <button class="match-filter-select league-filter-btn" data-id="39" style="cursor:pointer">Premier League</button>
+        <button class="match-filter-select league-filter-btn" data-id="140" style="cursor:pointer">La Liga</button>
+        <button class="match-filter-select league-filter-btn" data-id="135" style="cursor:pointer">Serie A</button>
+        <button class="match-filter-select league-filter-btn" data-id="2" style="cursor:pointer">Champions League</button>
+        <button class="match-filter-select league-filter-btn" data-id="332" style="cursor:pointer">NPFL</button>
+      </div>
+      <div class="matches-list" id="matches-list"></div>
+    </div>
+  </section>
+
+  <!-- ============ ROLLOVER CHALLENGES ============ -->
+  <section id="challenges">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-eyebrow">Main Attraction</span>
+        <h2 class="section-title">Rollover <span class="gold">Challenges</span></h2>
+        <p class="section-subtitle">Join a disciplined, AI-guided rollover challenge designed for transparent bankroll growth.</p>
+      </div>
+      <div class="challenges-grid">
+        <div class="glass-card challenge-card safe reveal reveal-delay-1">
+          <div class="challenge-name">ORACLE SAFE GROWTH</div>
+          <div class="challenge-odds">1.5</div>
+          <div class="challenge-odds-label">Odds Challenge</div>
+          <div class="challenge-price">₦2,500</div>
+          <div class="challenge-price-label">Entry Fee · Low Risk</div>
+          <ul class="challenge-features">
+            <li>Daily AI-Selected Picks</li>
+            <li>Auto Rollover Calculator</li>
+            <li>Progress Tracker</li>
+            <li>Statistics Dashboard</li>
+            <li>Challenge Countdown</li>
+          </ul>
+          <button class="btn btn-success btn-full" onclick="joinChallengePay('safe')">Join Challenge</button>
+          <p class="challenge-disclaimer">Sports betting involves risk. Past performance does not guarantee future results.</p>
+        </div>
+
+        <div class="glass-card challenge-card growth reveal reveal-delay-2">
+          <div class="challenge-name">ORACLE GROWTH PLUS</div>
+          <div class="challenge-odds">2.0</div>
+          <div class="challenge-odds-label">Odds Challenge</div>
+          <div class="challenge-price">₦2,000</div>
+          <div class="challenge-price-label">Entry Fee · Medium Risk</div>
+          <ul class="challenge-features">
+            <li>Daily AI-Selected Picks</li>
+            <li>Auto Rollover Calculator</li>
+            <li>Challenge Tracker</li>
+            <li>Performance Statistics</li>
+            <li>Countdown</li>
+          </ul>
+          <button class="btn btn-gold btn-full" onclick="joinChallengePay('growth_plus')">Join Challenge</button>
+          <p class="challenge-disclaimer">Balanced risk and reward. Never guaranteed. Bet responsibly.</p>
+        </div>
+
+        <div class="glass-card challenge-card accelerator reveal reveal-delay-3">
+          <div class="challenge-name">ORACLE ACCELERATOR</div>
+          <div class="challenge-odds">4.0</div>
+          <div class="challenge-odds-label">Odds Challenge</div>
+          <div class="challenge-price">₦1,500</div>
+          <div class="challenge-price-label">Entry Fee · High Risk</div>
+          <ul class="challenge-features">
+            <li>Daily AI-Selected Picks</li>
+            <li>Rollover Calculator</li>
+            <li>Progress Tracker</li>
+            <li>Countdown</li>
+          </ul>
+          <button class="btn btn-danger btn-full" onclick="joinChallengePay('accelerator')">Join Challenge</button>
+          <p class="challenge-disclaimer">High-risk challenge for experienced users only. Never displayed as guaranteed.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COUNTDOWN ============ -->
+  <section id="countdown">
+    <div class="container">
+      <div class="countdown-inner reveal">
+        <h3 class="countdown-title">Next <span>1.5 Challenge</span> Starts In</h3>
+        <div class="countdown-timer">
+          <div class="countdown-unit"><span class="countdown-num" id="cd-days">00</span><div class="countdown-label">Days</div></div>
+          <span class="countdown-sep">:</span>
+          <div class="countdown-unit"><span class="countdown-num" id="cd-hours">00</span><div class="countdown-label">Hours</div></div>
+          <span class="countdown-sep">:</span>
+          <div class="countdown-unit"><span class="countdown-num" id="cd-minutes">00</span><div class="countdown-label">Minutes</div></div>
+          <span class="countdown-sep">:</span>
+          <div class="countdown-unit"><span class="countdown-num" id="cd-seconds">00</span><div class="countdown-label">Seconds</div></div>
+        </div>
+        <button class="btn btn-primary btn-lg" onclick="joinChallengePay('safe')">Join Now</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ROLLOVER CALCULATOR ============ -->
+  <section id="calculator">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-eyebrow">Plan Ahead</span>
+        <h2 class="section-title">Rollover <span>Calculator</span></h2>
+        <p class="section-subtitle">Project your bankroll growth across any challenge before you commit.</p>
+      </div>
+      <div class="calc-wrapper">
+        <form id="calc-form" class="glass-card calc-form reveal reveal-delay-1" onsubmit="return false">
+          <div class="form-group">
+            <label>Starting Amount (₦)</label>
+            <input type="number" class="form-control" id="calc-start" value="1000" min="100" step="100">
+          </div>
+          <div class="form-group">
+            <label>Challenge Type</label>
+            <select class="form-control" id="calc-challenge">
+              <option value="safe">Oracle Safe Growth (1.5 odds)</option>
+              <option value="growth">Oracle Growth Plus (2.0 odds)</option>
+              <option value="accelerator">Oracle Accelerator (4.0 odds)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Number of Days</label>
+            <input type="number" class="form-control" id="calc-days" value="7" min="1" max="30">
+          </div>
+          <div class="form-group" style="margin-bottom:0">
+            <label>Projected Final Balance</label>
+            <div style="font-family:var(--font-display);font-size:1.8rem;font-weight:800;color:var(--success)" id="calc-projected">₦0</div>
+          </div>
+        </form>
+        <div class="glass-card calc-result reveal reveal-delay-2">
+          <table class="calc-table">
+            <thead>
+              <tr><th>Day</th><th>Stake</th><th>Odds</th><th>Potential Win</th></tr>
+            </thead>
+            <tbody id="calc-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ GAMIFICATION (XP / STREAK / ACHIEVEMENTS) ============ -->
+  <section id="gamification">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-eyebrow">Level Up</span>
+        <h2 class="section-title">Oracle <span class="gold">XP System</span></h2>
+        <p class="section-subtitle">Earn XP and Oracle Coins as you engage. Climb from Rookie Analyst to Grand Oracle.</p>
+      </div>
+      <div class="glass-card reveal" style="padding:30px;margin-bottom:24px">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:14px">
+          <span class="level-badge" id="user-level">🏅 Rookie Analyst</span>
+          <div style="display:flex;gap:16px;align-items:center">
+            <span class="streak-display">🔥 <span id="streak-count">0</span></span>
+            <span style="color:var(--gold);font-weight:700">🪙 <span id="coin-count">0</span></span>
+            <span id="user-xp" style="color:var(--electric);font-weight:600">0 XP</span>
+          </div>
+        </div>
+        <div class="xp-bar-wrapper">
+          <div class="xp-bar-track"><div class="xp-bar-fill" id="xp-bar-fill" style="width:0%"></div></div>
+        </div>
+      </div>
+      <div class="glass-card reveal reveal-delay-1" style="padding:30px">
+        <h4 style="font-family:var(--font-display);font-size:0.9rem;margin-bottom:6px">Achievements</h4>
+        <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:4px">Unlock badges as you engage with the platform.</p>
+        <div class="achievements-grid">
+          <div class="achievement-badge"><span class="achievement-icon">🏅</span><span class="achievement-name">First Win</span></div>
+          <div class="achievement-badge"><span class="achievement-icon">🔥</span><span class="achievement-name">5-Day Survivor</span></div>
+          <div class="achievement-badge locked"><span class="achievement-icon">🔥</span><span class="achievement-name">10-Day Survivor</span></div>
+          <div class="achievement-badge locked"><span class="achievement-icon">💪</span><span class="achievement-name">30-Day Survivor</span></div>
+          <div class="achievement-badge locked"><span class="achievement-icon">💯</span><span class="achievement-name">100-Day Streak</span></div>
+          <div class="achievement-badge locked"><span class="achievement-icon">🏆</span><span class="achievement-name">Oracle Champion</span></div>
+          <div class="achievement-badge locked"><span class="achievement-icon">🔮</span><span class="achievement-name">Grand Oracle</span></div>
+          <div class="achievement-badge locked"><span class="achievement-icon">💎</span><span class="achievement-name">Diamond Analyst</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ LEADERBOARD ============ -->
+  <section id="leaderboard">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-eyebrow">Rankings</span>
+        <h2 class="section-title">Oracle <span>Leaderboard</span></h2>
+        <p class="section-subtitle">No followers — only results. See where you rank among top analysts.</p>
+      </div>
+      <div class="leaderboard-tabs reveal">
+        <button class="lb-tab active" onclick="switchLeaderboardTab('xp', this)">Most XP</button>
+        <button class="lb-tab" onclick="switchLeaderboardTab('wins', this)">Highest Win Rate</button>
+        <button class="lb-tab" onclick="switchLeaderboardTab('streak', this)">Longest Streak</button>
+      </div>
+      <div class="glass-card reveal reveal-delay-1" style="padding:10px 20px;overflow-x:auto">
+        <table class="lb-table">
+          <thead>
+            <tr><th>Rank</th><th>Analyst</th><th>Record</th><th>Streak</th><th>XP</th></tr>
+          </thead>
+          <tbody id="lb-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PERFORMANCE / STATS ============ -->
+  <section id="performance">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-eyebrow">Transparency</span>
+        <h2 class="section-title">Performance <span>Dashboard</span></h2>
+        <p class="section-subtitle">Track total predictions, win rate, ROI and streaks — fully transparent, always.</p>
+      </div>
+      <div class="stats-grid reveal">
+        <div class="glass-card stat-card"><span class="stat-val" style="color:var(--electric)">12,847</span><span class="stat-lbl">Total Predictions</span></div>
+        <div class="glass-card stat-card"><span class="stat-val" style="color:var(--success)">10,021</span><span class="stat-lbl">Wins</span></div>
+        <div class="glass-card stat-card"><span class="stat-val" style="color:var(--danger)">2,826</span><span class="stat-lbl">Losses</span></div>
+        <div class="glass-card stat-card"><span class="stat-val" style="color:var(--gold)">78%</span><span class="stat-lbl">Win Rate</span></div>
+        <div class="glass-card stat-card"><span class="stat-val" style="color:var(--success)">+24.6%</span><span class="stat-lbl">ROI</span></div>
+        <div class="glass-card stat-card"><span class="stat-val" style="color:var(--electric)">1.92</span><span class="stat-lbl">Average Odds</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PRICING ============ -->
+  <section id="pricing">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-eyebrow">Plans</span>
+        <h2 class="section-title">Choose Your <span>Plan</span></h2>
+        <p class="section-subtitle">Start free, upgrade anytime. Cancel whenever you want.</p>
+      </div>
+      <div class="pricing-grid">
+        <div class="glass-card pricing-card reveal reveal-delay-1">
+          <div class="pricing-name">Free</div>
+          <div class="pricing-price">₦0</div>
+          <div class="pricing-period">forever</div>
+          <ul class="pricing-features">
+            <li><span class="check">✓</span> Daily Predictions</li>
+            <li><span class="check">✓</span> Basic Analysis</li>
+            <li><span class="cross">✕</span> Challenge Access</li>
+            <li><span class="cross">✕</span> Premium Reports</li>
+          </ul>
+          <button class="btn btn-outline btn-full" onclick="openModal('auth-modal')">Get Started</button>
+        </div>
+
+        <div class="glass-card pricing-card featured reveal reveal-delay-2">
+          <span class="pricing-badge">Most Popular</span>
+          <div class="pricing-name">Premium</div>
+          <div class="pricing-price">₦2,500<small>/mo</small></div>
+          <div class="pricing-period">billed monthly</div>
+          <ul class="pricing-features">
+            <li><span class="check">✓</span> 1.5 Challenge Access</li>
+            <li><span class="check">✓</span> Full AI Analysis</li>
+            <li><span class="check">✓</span> Rollover Calculator</li>
+            <li><span class="check">✓</span> Progress Tracker</li>
+            <li><span class="check">✓</span> Premium Reports</li>
+          </ul>
+          <button class="btn btn-primary btn-full" onclick="subscribePlan('premium')">Subscribe</button>
+        </div>
+
+        <div class="glass-card pricing-card reveal reveal-delay-3">
+          <div class="pricing-name">Elite</div>
+          <div class="pricing-price">₦5,000<small>/mo</small></div>
+          <div class="pricing-period">billed monthly</div>
+          <ul class="pricing-features">
+            <li><span class="check">✓</span> 1.5 / 2.0 / 4.0 Challenges</li>
+            <li><span class="check">✓</span> Advanced Statistics</li>
+            <li><span class="check">✓</span> Early Picks</li>
+            <li><span class="check">✓</span> Elite Badge</li>
+          </ul>
+          <button class="btn btn-gold btn-full" onclick="subscribePlan('elite')">Subscribe</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TESTIMONIALS ============ -->
+  <section id="testimonials">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-eyebrow">Community</span>
+        <h2 class="section-title">What Analysts <span>Say</span></h2>
+      </div>
+      <div class="testimonials-track sliding">
+        <div class="glass-card testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-text">The AI confidence scores have completely changed how I approach my rollover challenges. Transparent and disciplined.</p>
+          <div class="testimonial-author"><div class="testimonial-avatar">T</div><div><div class="testimonial-name">Tunde A.</div><div class="testimonial-handle">Oracle Master</div></div></div>
+        </div>
+        <div class="glass-card testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-text">Finally a platform that focuses on data instead of "guaranteed wins". The match center analysis is excellent.</p>
+          <div class="testimonial-author"><div class="testimonial-avatar">C</div><div><div class="testimonial-name">Chioma O.</div><div class="testimonial-handle">AI Strategist</div></div></div>
+        </div>
+        <div class="glass-card testimonial-card">
+          <div class="testimonial-stars">★★★★☆</div>
+          <p class="testimonial-text">The rollover calculator helped me plan my 1.5 challenge properly. Love the XP and streak system too.</p>
+          <div class="testimonial-author"><div class="testimonial-avatar">D</div><div><div class="testimonial-name">David K.</div><div class="testimonial-handle">Data Scout</div></div></div>
+        </div>
+        <!-- duplicate for loop -->
+        <div class="glass-card testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-text">The AI confidence scores have completely changed how I approach my rollover challenges. Transparent and disciplined.</p>
+          <div class="testimonial-author"><div class="testimonial-avatar">T</div><div><div class="testimonial-name">Tunde A.</div><div class="testimonial-handle">Oracle Master</div></div></div>
+        </div>
+        <div class="glass-card testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-text">Finally a platform that focuses on data instead of "guaranteed wins". The match center analysis is excellent.</p>
+          <div class="testimonial-author"><div class="testimonial-avatar">C</div><div><div class="testimonial-name">Chioma O.</div><div class="testimonial-handle">AI Strategist</div></div></div>
+        </div>
+        <div class="glass-card testimonial-card">
+          <div class="testimonial-stars">★★★★☆</div>
+          <p class="testimonial-text">The rollover calculator helped me plan my 1.5 challenge properly. Love the XP and streak system too.</p>
+          <div class="testimonial-author"><div class="testimonial-avatar">D</div><div><div class="testimonial-name">David K.</div><div class="testimonial-handle">Data Scout</div></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer>
+    <div class="container">
+      <div class="footer-disclaimer">
+        <strong>Disclaimer:</strong> Sports betting involves risk. Past performance does not guarantee future results.
+        OracleSports.ai provides data-driven analysis and educational insights only. Users are responsible for their
+        own betting decisions. We never display "Guaranteed Win" or "100% Sure Odds" — our focus is transparency,
+        statistics, and responsible betting.
+      </div>
+      <div class="footer-grid">
+        <div class="footer-col">
+          <a href="#hero" class="nav-logo" style="margin-bottom:6px">
+            <img src="assets/images/logo.jpg" alt="OracleSports.ai logo" style="height:36px;width:36px">
+            <span class="nav-logo-text">ORACLE<span>SPORTS.AI</span></span>
+          </a>
+          <p class="footer-brand-desc">AI-powered sports intelligence platform providing data-driven predictions, rollover challenges, and analytical tools. Predict Smarter. Bet Smarter.</p>
+          <div class="footer-social">
+            <a class="social-btn" href="#" aria-label="Telegram">TG</a>
+            <a class="social-btn" href="#" aria-label="Facebook">FB</a>
+            <a class="social-btn" href="#" aria-label="X / Twitter">X</a>
+            <a class="social-btn" href="#" aria-label="Instagram">IG</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul><li><a href="#">About</a></li><li><a href="#">Pricing</a></li><li><a href="#">Contact</a></li></ul>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <ul><li><a href="#">Terms of Service</a></li><li><a href="#">Privacy Policy</a></li><li><a href="#">Responsible Betting</a></li></ul>
+        </div>
+        <div class="footer-col">
+          <h4>Platform</h4>
+          <ul><li><a href="#predictions">Predictions</a></li><li><a href="#match-center">Match Center</a></li><li><a href="#challenges">Challenges</a></li></ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 OracleSports.ai — All rights reserved.</span>
+        <span>AI Powered. Data Driven. Results Focused.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============ MODALS ============ -->
+
+  <!-- Auth Modal -->
+  <div class="modal-overlay" id="auth-modal">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal('auth-modal')">✕</button>
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-tab="login" onclick="switchAuthTab('login', this)">Login</button>
+        <button class="auth-tab" data-tab="register" onclick="switchAuthTab('register', this)">Register</button>
+      </div>
+      <div class="modal-title">Welcome Back</div>
+      <p class="modal-sub">Access your AI predictions, challenges, and XP dashboard.</p>
+
+      <div id="auth-name-row" class="form-group" style="display:none">
+        <label>Full Name</label>
+        <input type="text" class="form-control" id="auth-name" placeholder="Full name">
+      </div>
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" class="form-control" id="auth-email" placeholder="you@example.com">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" class="form-control" id="auth-pass" placeholder="Min 6 characters">
+      </div>
+      <button class="btn btn-primary btn-full" id="auth-submit-btn" onclick="handleAuthSubmit()">Login</button>
+
+      <div class="auth-divider">or</div>
+      <button class="btn-google" onclick="handleGoogleLogin()">
+        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Continue with Google
+      </button>
+      <p style="text-align:center;font-size:0.78rem;color:var(--text-muted);margin-top:16px">
+        Trouble signing in? Make sure pop-ups aren't blocked for Google sign-in.
+      </p>
+    </div>
+  </div>
+
+  <!-- Pricing Modal (upsell) -->
+  <div class="modal-overlay" id="pricing-modal">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal('pricing-modal')">✕</button>
+      <div class="modal-title">🔒 Unlock Premium Insight</div>
+      <p class="modal-sub">Upgrade to Premium or Elite to access full AI analysis, value bets, and challenge tools.</p>
+      <button class="btn btn-primary btn-full" style="margin-bottom:10px" onclick="closeModal('pricing-modal'); subscribePlan('premium')">Get Premium — ₦2,500/mo</button>
+      <button class="btn btn-gold btn-full" onclick="closeModal('pricing-modal'); subscribePlan('elite')">Get Elite — ₦5,000/mo</button>
+    </div>
+  </div>
+
+  <!-- Prediction Detail Modal -->
+  <div class="modal-overlay" id="prediction-modal">
+    <div class="modal" style="max-width:480px">
+      <button class="modal-close" onclick="closeModal('prediction-modal')">✕</button>
+      <div class="prediction-detail-content"></div>
+    </div>
+  </div>
+
+  <!-- ============ APP SCRIPT ============ -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
